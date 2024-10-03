@@ -1,16 +1,17 @@
 {
-  "name": "peaq-resolve",
-  "version": "1.0.0",
+  "name": "peaq-resolve-test",
+  "version": "1.0.2",
   "description": "Resolver for peaq DIDs",
   "author": "peaq-network",
   "license": "MIT",
-  "main": "src/index.js",
+  "type": "module",
+  "main": "dist/index.js",
   "scripts": {
     "test": "jest",
     "build": "tsc"
   },
   "files": [
-    "dist/src",
+    "dist/",
     "package.json"
   ],
   "devDependencies": {

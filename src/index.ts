@@ -1,12 +1,22 @@
 import { ApiPromise, WsProvider } from '@polkadot/api';
-import { cryptoWaitReady } from '@polkadot/util-crypto';
+import { u8aConcat, u8aToU8a } from '@polkadot/util';
+import { cryptoWaitReady, blake2AsHex, decodeAddress } from '@polkadot/util-crypto';
 import { defaultOptions } from '@peaq-network/types';
 import type { Bytes, Struct } from '@polkadot/types-codec';
 import type { AccountId32, BlockNumber, Moment } from '@polkadot/types/interfaces/runtime';
 
-import { createStorageKeys, CreateStorageKeysEnum } from './utils'; // Example: Replace with actual module
-import * as peaqDidProto from 'peaq-did-proto-js';
+import peaqDidProto from 'peaq-did-proto-js';
 
+
+export enum CreateStorageKeysEnum {
+  ADDRESS,
+  STANDARD,
+}
+
+export interface CreateStorageKeysArgs {
+  value: AccountId32 | string;
+  type: CreateStorageKeysEnum;
+}
 
 type Address = AccountId32 | string;
 
@@ -80,7 +90,7 @@ export class peaqDidResolver {
       const accountAddress = address;
       if (!accountAddress) throw new Error('Address is required');
 
-      const { hashed_key } = createStorageKeys([
+      const { hashed_key } = this._createStorageKeys([
         {
           value: accountAddress,
           type: CreateStorageKeysEnum.ADDRESS,
@@ -213,4 +223,29 @@ export class peaqDidResolver {
         40 hexadecimal characters (0-9, a-f, A-F) with no characters omitted.`);
     }
   }
+
+  /**
+   * Generates storage keys for the user based on the address and type of 
+   * data being searched
+   * @param accountAddress - Address to check
+   * @returns None
+   */
+  private _createStorageKeys (args: CreateStorageKeysArgs[]) {
+    const keysByteArray = [];
+  
+    for (let i = 0; i < args.length; i++) {
+      if (args[i].type === CreateStorageKeysEnum.ADDRESS) {
+        const decoded_address = decodeAddress(args[i].value, false, 42);
+        keysByteArray.push(decoded_address);
+      }
+      if (args[i].type === CreateStorageKeysEnum.STANDARD) {
+        const hash_name = u8aToU8a(args[i].value);
+        keysByteArray.push(hash_name);
+      }
+    }
+  
+    const key = u8aConcat(...keysByteArray);
+    const hashed_key = blake2AsHex(key, 256);
+    return { hashed_key };
+  };
 }
