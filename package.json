@@ -1,0 +1,27 @@
+{
+  "name": "peaq-resolve",
+  "version": "1.0.0",
+  "description": "Resolver for peaq DIDs",
+  "author": "peaq-network",
+  "license": "MIT",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "jest",
+    "build": "tsc"
+  },
+  "files": [
+    "dist/src",
+    "package.json"
+  ],
+  "devDependencies": {
+    "@types/jest": "^29.5.13",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.2.5",
+    "typescript": "^5.6.2"
+  },
+  "dependencies": {
+    "@peaq-network/types": "^0.7.1",
+    "@polkadot/api": "^12.4.2",
+    "peaq-did-proto-js": "^2.1.0"
+  }
+}
